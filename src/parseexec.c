@@ -10,8 +10,10 @@ bool parseAndExecute(char* input) {
 		if (strcmp(verb, "quit") == 0) {
 			return false;
 		} else if (strcmp(verb, "look") == 0) {
+			printf("\n");
 			executeLook(noun);
 		} else if (strcmp(verb, "go") == 0) {
+			printf("\n");
 			executeGo(noun);
 		} else {
 			printf("Unknown command.\n");
