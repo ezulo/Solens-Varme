@@ -1,40 +1,37 @@
 #include <stdio.h>
 #include <string.h>
-
-struct Location {
-	const char *description;
-	const char *tag;
-}locs[] = {
-	{"A grassy meadow", "meadow"},
-	{"The top of the hill", "hill"}
-};
-
-
-#define numberOfLocations (sizeof locs / sizeof *locs)
-
-static unsigned currentLocation = 0;
+#include "object.h"
+#include "noun.h"
+#include "misc.h"
 
 void executeLook(const char *noun) {
 	if (noun != NULL && strcmp(noun, "around") == 0) {
-		printf("You are in %s.\n", locs[currentLocation].description);
+		printf("You are in %s.\n", player->location->description);
+		listObjectsAtLocation(player->location);
 	} else {
 		printf("Nothing to look at there.\n");
 	}
 }
 
 void executeGo(const char *noun) {
-	unsigned i;
-	for (i = 0; i < numberOfLocations; i++) {
-		if (noun != NULL && strcmp(noun, locs[i].tag) == 0) {
-			if (i == currentLocation) {
-				printf("You are already at this location.\n");
+	// iterate objects
+	// if object tag matches noun, and object is a location, move there
+	OBJECT *locationObj = NULL;
+	for (locationObj = objs; locationObj++; locationObj < endOfObjs) {
+		if (
+				locationObj->location == NULL
+				&&
+				hasTag(locationObj, noun)
+		) {
+			if (player->location == locationObj) {
+				printf("You are already at %s.\n", locationObj->description);
 			} else {
-				printf("Ok.\n");
-				currentLocation = i;
-				executeLook("around");
+				printf("OK.\n");
+				player->location = locationObj;
 			}
+			executeLook("around");
 			return;
 		}
 	}
-	printf("Where are you trying to go? Try again.\n");
+	printf("Where are you trying to go?");
 }
